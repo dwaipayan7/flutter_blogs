@@ -13,8 +13,11 @@ class AuthGradientButton extends StatelessWidget {
             colors: [
               AppPallete.gradient1,
               AppPallete.gradient2
-            ]
-        )
+            ],
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight
+        ),
+        borderRadius: BorderRadius.circular(7)
       ),
       child: ElevatedButton(
           onPressed: (){},
@@ -26,7 +29,8 @@ class AuthGradientButton extends StatelessWidget {
           ),),
         style: ElevatedButton.styleFrom(
           fixedSize: Size(390, 55),
-          backgroundColor: AppPallete.transparentColor
+          backgroundColor: AppPallete.transparentColor,
+            shadowColor: AppPallete.transparentColor
 
         ),
       ),
