@@ -1,0 +1,4 @@
+class AppSecrets{
+  static const supabaseUrl = "https://wqymfriknewenllhjdtb.supabase.co";
+  static const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxeW1mcmlrbmV3ZW5sbGhqZHRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0MjM1MjksImV4cCI6MjA0Nzk5OTUyOX0.MP7Gm6mbIAOCjFUt2laj7Ayd5oY4pL87fbbOCXKxL8s";
+}

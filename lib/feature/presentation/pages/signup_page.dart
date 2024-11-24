@@ -6,7 +6,7 @@ import '../wigets/auth_field.dart';
 import '../wigets/auth_gradient_button.dart';
 
 class SignupPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context)=> SignupPage());
+  static route() => MaterialPageRoute(builder: (context)=> const SignupPage());
   const SignupPage({super.key});
 
   @override
@@ -16,7 +16,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
