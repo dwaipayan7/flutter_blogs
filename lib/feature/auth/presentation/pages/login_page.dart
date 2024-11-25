@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blogs/core/theme/app_pallete.dart';
-import 'package:flutter_blogs/feature/presentation/pages/signup_page.dart';
+import 'package:flutter_blogs/feature/auth/presentation/pages/signup_page.dart';
+
 
 import '../wigets/auth_field.dart';
 import '../wigets/auth_gradient_button.dart';

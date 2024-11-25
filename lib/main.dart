@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blogs/core/secrets/app_secret.dart';
 import 'package:flutter_blogs/core/theme/theme.dart';
-import 'package:flutter_blogs/feature/presentation/pages/login_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'feature/auth/presentation/pages/login_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
