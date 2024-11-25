@@ -29,17 +29,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-     final response = await supabaseClient.auth.signUp(
+      final response = await supabaseClient.auth.signUp(
         password: password,
         email: email,
         data: {'name': name},
       );
 
-     if(response.user == null){
-       throw ServerException("User is null");
-     }
+      if (response.user == null) {
+        throw ServerException("User is null");
+      }
 
-     return response.user!.id;
+      return response.user!.id;
     } catch (e) {
       throw ServerException(e.toString());
     }
