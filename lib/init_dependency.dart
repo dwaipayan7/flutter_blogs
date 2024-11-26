@@ -11,22 +11,35 @@ import 'core/secrets/app_secret.dart';
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: AppSecrets.supabaseUrl,
+    anonKey: AppSecrets.supabaseAnonKey,
+  );
+
+  // Register Supabase client
+  serviceLocator.registerLazySingleton<SupabaseClient>(
+        () => Supabase.instance.client,
+  );
+
+  // Initialize Auth dependencies
   _initAuth();
-  final supabase = await Supabase.initialize(
-      url: AppSecrets.supabaseUrl, anonKey: AppSecrets.supabaseAnonKey);
-  serviceLocator.registerSingleton(() => supabase.client);
 }
 
 void _initAuth() {
   serviceLocator.registerFactory<AuthRemoteDataSource>(
-          () => AuthRemoteDataSourceImpl(serviceLocator()));
+        () => AuthRemoteDataSourceImpl(serviceLocator<SupabaseClient>()),
+  );
 
   serviceLocator.registerFactory<AuthRepository>(
-          () => AuthRepositoryImpl(serviceLocator()));
+        () => AuthRepositoryImpl(serviceLocator<AuthRemoteDataSource>()),
+  );
 
-  serviceLocator.registerFactory(() => UserSignUp(serviceLocator()));
+  serviceLocator.registerFactory(
+        () => UserSignUp(serviceLocator<AuthRepository>()),
+  );
 
   serviceLocator.registerLazySingleton(
-          () => AuthBloc(userSignUp: serviceLocator()));
+        () => AuthBloc(userSignUp: serviceLocator<UserSignUp>()),
+  );
 }
-
