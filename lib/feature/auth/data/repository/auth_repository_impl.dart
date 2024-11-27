@@ -14,18 +14,10 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async{
-    try{
-
-      final user = await authRemoteDataSource.loginWithEmailPassword(
+      return _getUser(()async =>  await authRemoteDataSource.loginWithEmailPassword(
           email: email,
           password: password
-      );
-
-      return Either.right(user);
-
-    }on ServerException catch(e){
-      return Either.left(Failure(e.message));
-    }
+      ));
   }
 
   @override
@@ -34,16 +26,26 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    try {
-      final user = await authRemoteDataSource.signUpWithEmailPassword(
-        name: name,
-        email: email,
-        password: password,
-      );
 
-      return Either.right(user);
-    } on ServerException catch (e) {
-      return Either.left(Failure(e.message));
-    }
+   return  _getUser(()async =>
+   await authRemoteDataSource.signUpWithEmailPassword(
+       name: name,
+       email: email,
+       password: password,
+     ));
+
   }
+
+ Future<Either<Failure, User>> _getUser(
+     Future<User>Function() fn,
+     ) async{
+   try{
+     final user = await fn();
+
+     return Either.right(user);
+   } on ServerException catch(e){
+     return Either.left(Failure(e.message));
+   }
+  }
+
 }
