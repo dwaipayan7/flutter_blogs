@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_blogs/core/usecase/usecase.dart';
+import 'package:flutter_blogs/feature/auth/domain/usecases/current_user_usecase.dart';
 import 'package:flutter_blogs/feature/auth/domain/usecases/user_login.dart';
 import 'package:flutter_blogs/feature/auth/domain/usecases/user_sign_up.dart';
 import 'package:meta/meta.dart';
@@ -13,12 +15,18 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignUp _userSignUp;
   final UserLogin _userLogin;
-  AuthBloc({required UserSignUp userSignUp, required UserLogin userLogin})
-      : _userSignUp = userSignUp,
+  final CurrentUser _currentUser;
+  AuthBloc({
+    required UserSignUp userSignUp,
+    required UserLogin userLogin,
+    required CurrentUser currentUser,
+  })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
+        _currentUser = currentUser,
         super(AuthInitial()) {
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
+    on<AuthIsUserLoggedIn>(_isUserLoggedIn);
   }
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
@@ -33,15 +41,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         (user) => emit(AuthLoaded(user: user)));
   }
 
-  FutureOr<void> _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async{
+  FutureOr<void> _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
 
- final res =  await _userLogin(UserLoginParams(
+    final res = await _userLogin(UserLoginParams(
       email: event.email,
       password: event.password,
     ));
 
     res.fold((l) => emit(AuthFailure(message: l.message)),
-            (r) => emit(AuthLoaded(user: r)));
+        (r) => emit(AuthLoaded(user: r)));
+  }
+
+  FutureOr<void> _isUserLoggedIn(
+    AuthIsUserLoggedIn event,
+    Emitter<AuthState> emit,
+  ) async {
+
+    final res = await _currentUser(NoParams());
+
+    res.fold(
+            (l) => emit(AuthFailure(message: l.message)),
+            (r) => emit(AuthLoaded(user: r))
+    );
+
   }
 }

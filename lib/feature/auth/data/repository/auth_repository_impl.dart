@@ -8,6 +8,21 @@ import 'package:fpdart/fpdart.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
 
+  @override
+  Future<Either<Failure, User>> currentUser() async{
+    try{
+      final user = await authRemoteDataSource.getCurrentUserData();
+      if(user == null){
+        return Either.left(Failure("User is not logged in"));
+      }
+      return Either.right(user);
+
+    }on ServerException catch(e){
+      return Either.left(Failure(e.message));
+    }
+
+  }
+
   AuthRepositoryImpl(this.authRemoteDataSource);
   @override
   Future<Either<Failure, User>> loginUpWithEmailPassword({
@@ -47,5 +62,7 @@ class AuthRepositoryImpl implements AuthRepository {
      return Either.left(Failure(e.message));
    }
   }
+
+
 
 }
