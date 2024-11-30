@@ -1,3 +1,4 @@
+import 'package:flutter_blogs/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:flutter_blogs/feature/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_blogs/feature/auth/data/repository/auth_repository_impl.dart';
 import 'package:flutter_blogs/feature/auth/domain/repository/auth_repository.dart';
@@ -23,6 +24,9 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<SupabaseClient>(
     () => Supabase.instance.client,
   );
+
+  //core
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
 
   // Initialize Auth dependencies
   _initAuth();
@@ -57,6 +61,7 @@ void _initAuth() {
       userSignUp: serviceLocator<UserSignUp>(),
       userLogin: serviceLocator<UserLogin>(),
       currentUser: serviceLocator<CurrentUser>(),
+      appUserCubit: serviceLocator(),
 
     ),
   );

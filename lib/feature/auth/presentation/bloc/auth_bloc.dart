@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_blogs/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:flutter_blogs/core/usecase/usecase.dart';
 import 'package:flutter_blogs/feature/auth/domain/usecases/current_user_usecase.dart';
 import 'package:flutter_blogs/feature/auth/domain/usecases/user_login.dart';
 import 'package:flutter_blogs/feature/auth/domain/usecases/user_sign_up.dart';
 import 'package:meta/meta.dart';
 
-import '../../domain/entities/user.dart';
-
+import '../../../../core/common/entities/user.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
@@ -16,21 +16,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignUp _userSignUp;
   final UserLogin _userLogin;
   final CurrentUser _currentUser;
+  final AppUserCubit _appUserCubit;
   AuthBloc({
     required UserSignUp userSignUp,
     required UserLogin userLogin,
     required CurrentUser currentUser,
+    required AppUserCubit appUserCubit,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,
+        _appUserCubit = appUserCubit,
         super(AuthInitial()) {
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
+    on<AuthEvent>((_, emit) => emit(AuthLoading()));
   }
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+    // emit(AuthLoading());
     final res = await _userSignUp(UserSignUpParams(
       email: event.email,
       password: event.password,
@@ -38,11 +42,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
 
     res.fold((l) => emit(AuthFailure(message: l.message)),
-        (user) => emit(AuthLoaded(user: user)));
+        (user) => _emitAuthSuccess(user, emit));
   }
 
   FutureOr<void> _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+    // emit(AuthLoading());
 
     final res = await _userLogin(UserLoginParams(
       email: event.email,
@@ -50,20 +54,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
 
     res.fold((l) => emit(AuthFailure(message: l.message)),
-        (r) => emit(AuthLoaded(user: r)));
+        (r) => _emitAuthSuccess(r, emit)
+
+        );
   }
 
   FutureOr<void> _isUserLoggedIn(
     AuthIsUserLoggedIn event,
     Emitter<AuthState> emit,
   ) async {
-
     final res = await _currentUser(NoParams());
 
-    res.fold(
-            (l) => emit(AuthFailure(message: l.message)),
-            (r) => emit(AuthLoaded(user: r))
+    res.fold((l) => emit(AuthFailure(message: l.message)),
+        (r) => _emitAuthSuccess(r, emit)
+
     );
+  }
+
+  void _emitAuthSuccess( User user, Emitter<AuthState> emit){
+
+    _appUserCubit.updateUser(user);
+    emit(AuthLoaded(user: user));
 
   }
+
 }

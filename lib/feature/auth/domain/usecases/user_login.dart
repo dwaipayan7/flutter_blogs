@@ -1,8 +1,10 @@
 import 'package:flutter_blogs/core/error/failure.dart';
 import 'package:flutter_blogs/core/usecase/usecase.dart';
-import 'package:flutter_blogs/feature/auth/domain/entities/user.dart';
+
 import 'package:flutter_blogs/feature/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/src/either.dart';
+
+import '../../../../core/common/entities/user.dart';
 
 class UserLogin implements UseCase<User, UserLoginParams>{
 
