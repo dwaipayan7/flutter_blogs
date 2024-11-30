@@ -6,6 +6,7 @@ import 'package:flutter_blogs/init_dependency.dart';
 
 import 'feature/auth/presentation/bloc/auth_bloc.dart';
 import 'feature/auth/presentation/pages/login_page.dart';
+import 'feature/blog/presentation/pages/blog_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,10 +59,9 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if(isLoggedIn){
-            return Scaffold(body:
-            Center(child: Text("Logged In!!"),),);
+            return const BlogPage();
           }
-          return LoginPage();
+          return const LoginPage();
         },
       ),
     );
