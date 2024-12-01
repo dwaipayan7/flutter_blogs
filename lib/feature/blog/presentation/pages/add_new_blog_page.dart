@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blogs/core/theme/app_pallete.dart';
+import 'package:flutter_blogs/core/utils/pick_image.dart';
 import 'package:flutter_blogs/feature/blog/presentation/widgets/blog_editor.dart';
 
 class AddNewBlogPage extends StatefulWidget {
@@ -17,6 +21,17 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
   List<String> selectedTopics = [];
+
+  File? image;
+
+  void selectImage() async{
+    final pickedImage = await pickImage();
+    if(pickedImage != null){
+      setState(() {
+        image = pickedImage;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -46,35 +61,43 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              DottedBorder(
-                  color: AppPallete.borderColor,
-                  dashPattern: const [10, 4],
-                  radius: const Radius.circular(10),
-                  borderType: BorderType.RRect,
-                  strokeCap: StrokeCap.round,
-                  child: Container(
-                    height: 150,
-                    width: double.infinity,
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.folder_open,
-                          size: 40,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          "Selected Image",
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ],
-                    ),
-                  )),
+              GestureDetector(
+                onTap: () async{
+                  selectImage();
+                },
+                child: DottedBorder(
+                    color: AppPallete.borderColor,
+                    dashPattern: const [10, 4],
+                    radius: const Radius.circular(10),
+                    borderType: BorderType.RRect,
+                    strokeCap: StrokeCap.round,
+                    child: Container(
+                      height: 150,
+                      width: double.infinity,
+                      child:
+                      image != null ?
+                          Image(image: FileImage(image!), fit: BoxFit.cover,):
+                      const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.folder_open,
+                            size: 40,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "Selected Image",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ],
+                      ),
+                    )),
+              ),
               const SizedBox(height: 20,),
               SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
@@ -88,14 +111,16 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                           padding: const EdgeInsets.all(5.0),
                           child: GestureDetector(
                             onTap: (){
-                              if(selectedTopics.contains(e)){
-                                selectedTopics.remove(e);
-                              }else{
-                                selectedTopics.add(e);
-                                setState(() {});
+                              setState(() {
+                                if(selectedTopics.contains(e)){
+                                  selectedTopics.remove(e);
+                                }else{
+                                  selectedTopics.add(e);
+                                }
+                              });
+                              if (kDebugMode) {
+                                print(selectedTopics);
                               }
-
-                              print(selectedTopics);
                             },
                             child: Chip(
                               color: selectedTopics.contains(e)
@@ -103,7 +128,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                   : null,
                               label: Text(e),
                               side: selectedTopics.contains(e)
-                                  ? BorderSide(
+                                  ? const BorderSide(
                                   color: AppPallete.borderColor
                               )
                                   : null
