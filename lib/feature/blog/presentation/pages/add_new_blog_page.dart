@@ -17,16 +17,15 @@ class AddNewBlogPage extends StatefulWidget {
 }
 
 class _AddNewBlogPageState extends State<AddNewBlogPage> {
-
   final titleController = TextEditingController();
   final contentController = TextEditingController();
   List<String> selectedTopics = [];
 
   File? image;
 
-  void selectImage() async{
+  void selectImage() async {
     final pickedImage = await pickImage();
-    if(pickedImage != null){
+    if (pickedImage != null) {
       setState(() {
         image = pickedImage;
       });
@@ -62,7 +61,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () async{
+                onTap: () async {
                   selectImage();
                 },
                 child: DottedBorder(
@@ -71,31 +70,40 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                     radius: const Radius.circular(10),
                     borderType: BorderType.RRect,
                     strokeCap: StrokeCap.round,
-                    child: Container(
-                      height: 150,
-                      width: double.infinity,
-                      child:
-                      image != null ?
-                          Image(image: FileImage(image!), fit: BoxFit.cover,):
-                      const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.folder_open,
-                            size: 40,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            "Selected Image",
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ],
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    child: image != null
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(15), // Rounded corners
+                      child: Image(
+                        image: FileImage(image!),
+                        fit: BoxFit.cover,
                       ),
-                    )),
+                    )
+                        : const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.folder_open,
+                          size: 40,
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          "Select Image",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ),
               ),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
@@ -110,11 +118,11 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                         (e) => Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               setState(() {
-                                if(selectedTopics.contains(e)){
+                                if (selectedTopics.contains(e)) {
                                   selectedTopics.remove(e);
-                                }else{
+                                } else {
                                   selectedTopics.add(e);
                                 }
                               });
@@ -123,32 +131,30 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                               }
                             },
                             child: Chip(
-                              color: selectedTopics.contains(e)
-                                  ?  const WidgetStatePropertyAll(AppPallete.gradient1)
-                                  : null,
-                              label: Text(e),
-                              side: selectedTopics.contains(e)
-                                  ? const BorderSide(
-                                  color: AppPallete.borderColor
-                              )
-                                  : null
-                            ),
+                                color: selectedTopics.contains(e)
+                                    ? const WidgetStatePropertyAll(
+                                        AppPallete.gradient1)
+                                    : null,
+                                label: Text(e),
+                                side: selectedTopics.contains(e)
+                                    ? const BorderSide(
+                                        color: AppPallete.borderColor)
+                                    : null),
                           ),
                         ),
                       )
                       .toList(),
                 ),
               ),
-              const SizedBox(height: 15,),
-              BlogEditor(
-                  controller: titleController,
-                  hintText: 'Blog Title'
+              const SizedBox(
+                height: 15,
               ),
-              const SizedBox(height: 15,),
+              BlogEditor(controller: titleController, hintText: 'Blog Title'),
+              const SizedBox(
+                height: 15,
+              ),
               BlogEditor(
-                  controller: contentController,
-                  hintText: 'Blog Content'
-              )
+                  controller: contentController, hintText: 'Blog Content')
             ],
           ),
         ),
