@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_blogs/core/utils/pick_image.dart';
 import 'package:flutter_blogs/core/utils/show_snackbar.dart';
 import 'package:flutter_blogs/feature/blog/presentation/pages/blog_page.dart';
 import 'package:flutter_blogs/feature/blog/presentation/widgets/blog_editor.dart';
-
 import '../bloc/blog_bloc.dart';
 
 class AddNewBlogPage extends StatefulWidget {
@@ -65,10 +63,10 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         ],
       ),
       body: BlocConsumer<BlogBloc, BlogState>(
-  listener: (context, state) {
+      listener: (context, state) {
     if(state is BlogFailure){
       showSnackBar(context, state.error);
-    }else if(state is BlogSuccess){
+    }else if(state is BlogUploadSuccess){
       Navigator.pushAndRemoveUntil(context,
           BlogPage.route(),
           (route) => false
@@ -78,7 +76,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   builder: (context, state) {
 
     if(state is BlogLoading){
-      return Loader();
+      return const Loader();
     }
 
     return SingleChildScrollView(
@@ -148,7 +146,8 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  if (selectedTopics.contains(e)) {
+                                  if (
+                                  selectedTopics.contains(e)) {
                                     selectedTopics.remove(e);
                                   } else {
                                     selectedTopics.add(e);
