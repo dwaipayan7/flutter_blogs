@@ -75,9 +75,7 @@ void _initBlog() {
   //Datasource
   serviceLocator
     ..registerFactory<BlogRemoteDataSource>(
-      () => BlogRemoteDataSourceImpl(
-        supabaseClient: serviceLocator(),
-      ),
+      () => BlogRemoteDataSourceImpl(supabaseClient: serviceLocator()),
     )
 
     //repository

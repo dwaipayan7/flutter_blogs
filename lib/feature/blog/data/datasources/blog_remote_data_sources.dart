@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter_blogs/core/error/exceptions.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/error/exceptions.dart';
 import '../models/blog_models.dart';
 
 abstract interface class BlogRemoteDataSource {
@@ -11,9 +11,7 @@ abstract interface class BlogRemoteDataSource {
     required File image,
     required BlogModel blog,
   });
-
   Future<List<BlogModel>> getAllBlogs();
-
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -21,13 +19,16 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
 
   BlogRemoteDataSourceImpl({required this.supabaseClient});
 
+
   @override
   Future<BlogModel> uploadBlog(BlogModel blog) async {
     try {
       final blogData =
-          await supabaseClient.from('blogs').insert(blog.toJson()).select();
+      await supabaseClient.from('blogs').insert(blog.toJson()).select();
 
       return BlogModel.fromJson(blogData.first);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -39,29 +40,36 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
     required BlogModel blog,
   }) async {
     try {
-     await supabaseClient.storage.from('blog_images').upload(
-            blog.id,
-            image,
-          );
+      await supabaseClient.storage.from('blog_images').upload(
+        blog.id,
+        image,
+      );
 
-     return supabaseClient.storage.from('blog_images').getPublicUrl(blog.id);
-
+      return supabaseClient.storage.from('blog_images').getPublicUrl(
+        blog.id,
+      );
+    } on StorageException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
   @override
-  Future<List<BlogModel>> getAllBlogs() async{
-    try{
-
-      final blogs = await supabaseClient.from('blogs').select('*, profiles(name)');
-
-     return blogs.map((blog) => BlogModel.fromJson(blog).copyWith(
-       posterName: blog['profiles']['name']
-     )).toList();
-
-    }catch(e){
+  Future<List<BlogModel>> getAllBlogs() async {
+    try {
+      final blogs =
+      await supabaseClient.from('blogs').select('*, profiles (name)');
+      return blogs
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+          posterName: blog['profiles']['name'],
+        ),
+      )
+          .toList();
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
       throw ServerException(e.toString());
     }
   }

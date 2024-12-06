@@ -1,4 +1,5 @@
 
+
 import '../../domain/entities/blog.dart';
 
 class BlogModel extends Blog {
